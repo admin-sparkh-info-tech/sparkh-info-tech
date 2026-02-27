@@ -317,7 +317,7 @@
     <div id="webgl-container"></div>
 
     <!-- Header & Navigation -->
-    <nav class="fixed w-full z-50 glass-panel py-5 transition-all duration-300 border-b border-white/5" id="navbar">
+    <nav class="fixed w-full z-[60] glass-panel py-5 transition-all duration-300 border-b border-white/5" id="navbar">
         <div class="content-container flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <a href="#home" class="hover:opacity-80 transition-opacity flex items-center">
@@ -342,24 +342,47 @@
             </div>
 
             <!-- Mobile Menu Toggle -->
-            <button class="md:hidden text-white hover:text-cyan" id="mobileMenuBtn">
-                <i data-lucide="menu" class="w-6 h-6"></i>
+            <button class="md:hidden text-white hover:text-cyan relative w-8 h-8 z-[70]" id="mobileMenuBtn">
+                <div class="absolute inset-0 flex items-center justify-center transition-all duration-300 transform"
+                    id="menuIconOpen">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </div>
+                <div class="absolute inset-0 flex items-center justify-center transition-all duration-300 transform scale-0 -rotate-90 opacity-0"
+                    id="menuIconClose">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </div>
             </button>
         </div>
-        <!-- Mobile Dropdown Menu -->
-        <div id="mobileMenu"
-            class="hidden md:hidden bg-black/95 border-t border-white/10 px-6 py-4 flex flex-col gap-4 text-sm font-medium text-textMuted">
-            <a href="#home" class="hover:text-white transition-colors py-2 border-b border-white/5">Home</a>
-            <a href="#about" class="hover:text-white transition-colors py-2 border-b border-white/5">About Us</a>
-            <a href="#services" class="hover:text-white transition-colors py-2 border-b border-white/5">Services</a>
-            <a href="#products" class="hover:text-white transition-colors py-2 border-b border-white/5">Products</a>
-            <a href="#process" class="hover:text-white transition-colors py-2 border-b border-white/5">Process</a>
-            <a href="#whyus" class="hover:text-white transition-colors py-2 border-b border-white/5">Why Us</a>
+    </nav>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[45] opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out md:hidden">
+    </div>
+
+    <!-- Mobile Dropdown Menu (Slide-in from Right) -->
+    <div id="mobileMenu"
+        class="fixed top-0 right-0 h-full w-[280px] bg-[#0A0A0A]/95 backdrop-blur-md border-l border-white/10 p-6 pt-28 pb-6 flex flex-col gap-2 text-sm font-medium text-textMuted z-[50] translate-x-full transition-transform duration-300 ease-in-out md:hidden shadow-2xl overflow-y-auto">
+        <a href="#home"
+            class="mobile-link text-white hover:text-cyan transition-all duration-300 py-3 border-b border-white/5 opacity-0 translate-y-4">Home</a>
+        <a href="#about"
+            class="mobile-link hover:text-white transition-all duration-300 py-3 border-b border-white/5 opacity-0 translate-y-4">About
+            Us</a>
+        <a href="#services"
+            class="mobile-link hover:text-white transition-all duration-300 py-3 border-b border-white/5 opacity-0 translate-y-4">Services</a>
+        <a href="#products"
+            class="mobile-link hover:text-white transition-all duration-300 py-3 border-b border-white/5 opacity-0 translate-y-4">Products</a>
+        <a href="#process"
+            class="mobile-link hover:text-white transition-all duration-300 py-3 border-b border-white/5 opacity-0 translate-y-4">Process</a>
+        <a href="#whyus"
+            class="mobile-link hover:text-white transition-all duration-300 py-3 border-b border-white/5 opacity-0 translate-y-4">Why
+            Us</a>
+        <div class="mt-4 pt-4 flex flex-col gap-4 border-t border-white/10">
             <a href="#contact"
-                class="mt-2 bg-accent text-white px-6 py-3 rounded-full text-center font-semibold hover:bg-accent/80 transition-all">Start
+                class="mobile-link bg-accent text-white px-6 py-4 rounded-full text-center font-semibold hover:bg-accent/80 transition-all duration-300 opacity-0 translate-y-4 shadow-lg shadow-accent/20">Start
                 Project</a>
         </div>
-    </nav>
+    </div>
 
     <!-- 1. HOME / HERO SECTION -->
     <section id="home" class="min-h-[100vh] flex items-center justify-center relative pt-20">
@@ -1077,12 +1100,53 @@
         // Mobile Menu Logic
         const mobileBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
-        mobileBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-        // Close menu when a nav link is clicked
-        mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const menuIconOpen = document.getElementById('menuIconOpen');
+        const menuIconClose = document.getElementById('menuIconClose');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        let isMenuOpen = false;
+
+        function toggleMobileMenu() {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                // Open Menu
+                mobileMenu.classList.remove('translate-x-full');
+                mobileOverlay.classList.remove('opacity-0', 'pointer-events-none');
+                document.body.style.overflow = 'hidden'; // prevent scroll
+
+                // Icon Animation (Menu -> X)
+                menuIconOpen.classList.add('scale-0', 'rotate-90', 'opacity-0');
+                menuIconClose.classList.remove('scale-0', '-rotate-90', 'opacity-0');
+
+                // Stagger Links In
+                mobileLinks.forEach((link, idx) => {
+                    setTimeout(() => {
+                        link.classList.remove('opacity-0', 'translate-y-4');
+                    }, 150 + (idx * 50));
+                });
+            } else {
+                // Close Menu
+                mobileMenu.classList.add('translate-x-full');
+                mobileOverlay.classList.add('opacity-0', 'pointer-events-none');
+                document.body.style.overflow = ''; // allow scroll
+
+                // Icon Animation (X -> Menu)
+                menuIconOpen.classList.remove('scale-0', 'rotate-90', 'opacity-0');
+                menuIconClose.classList.add('scale-0', '-rotate-90', 'opacity-0');
+
+                // Reset Links
+                mobileLinks.forEach(link => {
+                    link.classList.add('opacity-0', 'translate-y-4');
+                });
+            }
+        }
+
+        mobileBtn.addEventListener('click', toggleMobileMenu);
+        mobileOverlay.addEventListener('click', toggleMobileMenu);
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (isMenuOpen) toggleMobileMenu();
+            });
         });
 
         // Desktop Custom Cursor
