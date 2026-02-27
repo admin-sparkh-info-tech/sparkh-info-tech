@@ -362,6 +362,19 @@
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
         </div>
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobileMenu"
+            class="hidden md:hidden bg-black/95 border-t border-white/10 px-6 py-4 flex flex-col gap-4 text-sm font-medium text-textMuted">
+            <a href="#home" class="hover:text-white transition-colors py-2 border-b border-white/5">Home</a>
+            <a href="#about" class="hover:text-white transition-colors py-2 border-b border-white/5">About Us</a>
+            <a href="#services" class="hover:text-white transition-colors py-2 border-b border-white/5">Services</a>
+            <a href="#products" class="hover:text-white transition-colors py-2 border-b border-white/5">Products</a>
+            <a href="#process" class="hover:text-white transition-colors py-2 border-b border-white/5">Process</a>
+            <a href="#whyus" class="hover:text-white transition-colors py-2 border-b border-white/5">Why Us</a>
+            <a href="#contact"
+                class="mt-2 bg-accent text-white px-6 py-3 rounded-full text-center font-semibold hover:bg-accent/80 transition-all">Start
+                Project</a>
+        </div>
     </nav>
 
     <!-- 1. HOME / HERO SECTION -->
@@ -1079,9 +1092,13 @@
 
         // Mobile Menu Logic
         const mobileBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
         mobileBtn.addEventListener('click', () => {
-            alert('Mobile menu navigation triggered.');
-            // Implement full sliding mobile menu here if requested
+            mobileMenu.classList.toggle('hidden');
+        });
+        // Close menu when a nav link is clicked
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
         });
 
         // Desktop Custom Cursor
