@@ -104,28 +104,8 @@
     <!-- Icons (Lucide) -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        deepblue: '#0A0A0A',
-                        accent: '#F68747',
-                        cyan: '#F68747',
-                        textMain: '#FFFFFF',
-                        textMuted: '#B0B0B0'
-                    },
-                    fontFamily: {
-                        heading: ['Poppins', 'sans-serif'],
-                        body: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Tailwind CSS (compiled, production-ready) -->
+    <link rel="stylesheet" href="style.css">
 
     <!-- Animations (GSAP) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -1016,22 +996,21 @@
                                     <label class="block text-sm font-semibold text-textMuted mb-2">Phone</label>
                                     <input type="text" id="contact-phone"
                                         class="w-full bg-deepblue/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-cyan focus:ring-1 focus:ring-cyan transition-all"
-                                        placeholder="+91 98765 43210">
+                                        </div>
                                 </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-textMuted mb-2">Email Address</label>
-                                <input type="email" id="contact-email"
-                                    class="w-full bg-deepblue/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-cyan focus:ring-1 focus:ring-cyan transition-all"
-                                    placeholder="youremail@domain.com">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-textMuted mb-2">Project Brief</label>
-                                <textarea rows="4" id="contact-brief"
-                                    class="w-full bg-deepblue/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-cyan focus:ring-1 focus:ring-cyan transition-all resize-none"
-                                    placeholder="Tell us about your system requirements and goals..."></textarea>
-                            </div>
-                            <button type="button" id="consultation-btn" onclick="(function(){
+                                <div>
+                                    <label class="block text-sm font-semibold text-textMuted mb-2">Email Address</label>
+                                    <input type="email" id="contact-email"
+                                        class="w-full bg-deepblue/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-cyan focus:ring-1 focus:ring-cyan transition-all"
+                                        placeholder="youremail@domain.com">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-textMuted mb-2">Project Brief</label>
+                                    <textarea rows="4" id="contact-brief"
+                                        class="w-full bg-deepblue/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-cyan focus:ring-1 focus:ring-cyan transition-all resize-none"
+                                        placeholder="Tell us about your system requirements and goals..."></textarea>
+                                </div>
+                                <button type="button" id="consultation-btn" onclick="(function(){
                                     var name = document.getElementById('contact-name').value || 'Not provided';
                                     var phone = document.getElementById('contact-phone').value || 'Not provided';
                                     var email = document.getElementById('contact-email').value || 'Not provided';
@@ -1043,10 +1022,10 @@
                                         + '*Project Brief:* ' + encodeURIComponent(brief);
                                     window.open('https://wa.me/918015048274?text=' + msg, '_blank');
                                 })()"
-                                class="w-full bg-gradient-to-r from-accent to-cyan text-white font-bold text-lg py-5 rounded-2xl hover:shadow-[0_0_30px_rgba(47,128,237,0.5)] transition-all flex justify-center items-center gap-2 group cursor-pointer">
-                                Request Consultation <i data-lucide="send"
-                                    class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
-                            </button>
+                                    class="w-full bg-gradient-to-r from-accent to-cyan text-white font-bold text-lg py-5 rounded-2xl hover:shadow-[0_0_30px_rgba(47,128,237,0.5)] transition-all flex justify-center items-center gap-2 group cursor-pointer">
+                                    Request Consultation <i data-lucide="send"
+                                        class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                                </button>
                         </form>
                     </div>
 

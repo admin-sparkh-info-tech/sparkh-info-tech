@@ -1,0 +1,24 @@
+{
+  "name": "sparkh-infotech",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/admin-sparkh-info-tech/sparkh-info-tech.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/admin-sparkh-info-tech/sparkh-info-tech/issues"
+  },
+  "homepage": "https://github.com/admin-sparkh-info-tech/sparkh-info-tech#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.2.1"
+  }
+}
