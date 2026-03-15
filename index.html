@@ -102,7 +102,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" media="print" onload="this.media='all'">
+    
+    <!-- Critical Preloads -->
+    <link rel="preload" href="logo.png" as="image">
 
     <!-- 3D Library (Three.js) Import Map moved to bottom -->
 
@@ -208,6 +211,16 @@
             height: 100vh;
             z-index: -1;
             pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
+        }
+
+        @media (max-width: 1023px) {
+            #webgl-container {
+                display: none;
+            }
+            body {
+                background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);
+            }
         }
 
         /* Scrollbar Optimization */
@@ -305,7 +318,7 @@
         <div class="content-container flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <a href="#home" class="hover:opacity-80 transition-opacity flex items-center gap-2">
-                    <img src="logo.png" alt="Sparkh Infotech Logo" class="h-9 w-auto" width="36" height="36">
+                    <img src="logo.png" alt="Sparkh Infotech Logo" class="h-9 w-auto" width="36" height="36" fetchpriority="high">
                     <span class="text-xl font-bold font-heading tracking-wide">Sparkh<span class="text-cyan">
                             Infotech</span></span>
                 </a>
@@ -1258,112 +1271,81 @@
         });
     </script>
 
-    <!-- Three.js 3D Grid Engine Setup -->
+    <!-- Three.js 3D Grid Engine - Loaded Conditionally for Performance -->
     <script type="module">
-        import * as THREE from 'three';
+        // Only load and initialize Three.js on Desktop (width >= 1024px)
+        // This saves 250KB+ of script and massive main-thread work on mobile
+        if (window.innerWidth >= 1024) {
+            import('three').then((THREE) => {
+                const container = document.getElementById('webgl-container');
+                if (!container) return;
 
-        // Performance Optimization Boolean
-        const isMobile = window.innerWidth < 768;
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+                camera.position.set(0, 3, 10);
+                camera.lookAt(0, 0, 0);
 
-        const container = document.getElementById('webgl-container');
-        const scene = new THREE.Scene();
+                // Use antialias: false for better battery life even on desktop
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                container.appendChild(renderer.domElement);
 
-        // Advanced Camera Setup
-        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 3, 10);
-        camera.lookAt(0, 0, 0);
+                const group = new THREE.Group();
+                scene.add(group);
 
-        // Renderer
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobile });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 2));
-        container.appendChild(renderer.domElement);
+                const gridHelper = new THREE.GridHelper(200, 100, 0xFFFFFF, 0xF68747);
+                gridHelper.position.y = -3;
+                gridHelper.material.opacity = 0.3;
+                gridHelper.material.transparent = true;
+                group.add(gridHelper);
 
-        // Scene Elements Group
-        const group = new THREE.Group();
-        scene.add(group);
+                const particleCount = 400;
+                const particlesGeometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                for (let i = 0; i < particleCount * 3; i++) {
+                    positions[i] = (Math.random() - 0.5) * 40;
+                    if (i % 3 === 1) positions[i] = (Math.random() * 10) - 2;
+                }
+                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                const particlesMaterial = new THREE.PointsMaterial({
+                    size: 0.08,
+                    color: 0xF68747,
+                    transparent: true,
+                    opacity: 0.6,
+                    blending: THREE.AdditiveBlending
+                });
+                const particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
+                group.add(particleSystem);
 
-        // 1. Dynamic Flowing Grid (Architecture theme)
-        const gridHelper = new THREE.GridHelper(200, 100, 0xFFFFFF, 0xF68747);
-        gridHelper.position.y = -3;
-        gridHelper.material.opacity = 0.5;
-        gridHelper.material.transparent = true;
-        group.add(gridHelper);
+                let mouseX = 0, mouseY = 0;
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = (e.clientX - window.innerWidth / 2) * 0.002;
+                    mouseY = (e.clientY - window.innerHeight / 2) * 0.002;
+                });
 
-        // 2. Data Particles / Nodes
-        const particleCount = isMobile ? 250 : 600;
-        const particlesGeometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
+                const clock = new THREE.Clock();
+                function animate() {
+                    requestAnimationFrame(animate);
+                    const delta = clock.getElapsedTime();
+                    
+                    camera.position.x += (mouseX - camera.position.x) * 0.05;
+                    camera.position.y += (-mouseY + 3 - camera.position.y) * 0.05;
+                    camera.lookAt(0, 0, 0);
+                    
+                    gridHelper.position.z = (delta * 1.5) % 2;
+                    particleSystem.rotation.y = delta * 0.02;
+                    renderer.render(scene, camera);
+                }
+                animate();
 
-        for (let i = 0; i < particleCount * 3; i++) {
-            positions[i] = (Math.random() - 0.5) * 40;
-            // Elevate particles slightly above the grid
-            if (i % 3 === 1) positions[i] = (Math.random() * 10) - 2;
-        }
-
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.08,
-            color: 0xF68747,
-            transparent: true,
-            opacity: 0.8,
-            blending: THREE.AdditiveBlending
-        });
-
-        const particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
-        group.add(particleSystem);
-
-        // Mouse Parallax Logic
-        let mouseX = 0;
-        let mouseY = 0;
-        let targetX = 0;
-        let targetY = 0;
-
-        const windowHalfX = window.innerWidth / 2;
-        const windowHalfY = window.innerHeight / 2;
-
-        if (!isMobile) {
-            document.addEventListener('mousemove', (event) => {
-                mouseX = (event.clientX - windowHalfX);
-                mouseY = (event.clientY - windowHalfY);
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                }, { passive: true });
             });
         }
-
-        // Primary Animation Loop
-        const clock = new THREE.Clock();
-
-        function animate() {
-            requestAnimationFrame(animate);
-            const elapsedTime = clock.getElapsedTime();
-
-            // Smooth Camera Parallax Effect
-            targetX = mouseX * 0.003;
-            targetY = mouseY * 0.003;
-
-            camera.position.x += (targetX - camera.position.x) * 0.05;
-            camera.position.y += (-targetY + 3 - camera.position.y) * 0.05;
-            camera.lookAt(0, 0, 0);
-
-            // Grid Wave Motion simulation
-            gridHelper.position.z = (elapsedTime * 2) % 2;
-
-            // Gentle Particle Rotation
-            particleSystem.rotation.y = elapsedTime * 0.03;
-            if (!isMobile) {
-                particleSystem.rotation.x = Math.sin(elapsedTime * 0.2) * 0.1;
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        animate();
-
-        // High-performance resize handler
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
     </script>
 </body>
 
