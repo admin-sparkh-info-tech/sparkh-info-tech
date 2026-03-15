@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://sparkh.tech/sitemap.xml
+Sitemap: https://www.sparkhinfotech.in/sitemap.xml

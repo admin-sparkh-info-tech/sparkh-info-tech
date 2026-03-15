@@ -2,14 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <!-- Homepage -->
     <url>
-        <loc>https://sparkh.tech/</loc>
+        <loc>https://www.sparkhinfotech.in/</loc>
         <lastmod>2026-03-15</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
     <!-- Digital Marketing Blog -->
     <url>
-        <loc>https://sparkh.tech/blog-digital-marketing-strategies.html</loc>
+        <loc>https://www.sparkhinfotech.in/blog-digital-marketing-strategies.html</loc>
         <lastmod>2026-03-15</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
